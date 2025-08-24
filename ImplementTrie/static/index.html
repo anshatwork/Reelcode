@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IP Routing Table (Radix Trie)</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="app-header">
+        <h1>IP Routing Table</h1>
+        <div class="actions">
+            <button id="themeToggle" class="secondary" aria-pressed="false" title="Toggle theme">Theme</button>
+            <button id="helpBtn" class="secondary">Help</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h2>Add Route</h2>
+            <form id="addRouteForm">
+                <div class="row">
+                    <label for="prefix">Prefix (CIDR)</label>
+                    <input type="text" id="prefix" placeholder="192.168.0.0/16" required />
+                </div>
+                <div class="row">
+                    <label for="nextHop">Next Hop</label>
+                    <input type="text" id="nextHop" placeholder="Router-A" required />
+                </div>
+                <div class="row">
+                    <button type="submit">Add / Update</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Lookup IP</h2>
+            <form id="lookupForm">
+                <div class="row">
+                    <label for="lookupIp">IP Address</label>
+                    <input type="text" id="lookupIp" placeholder="192.168.1.42" required />
+                </div>
+                <div class="row">
+                    <button type="submit">Lookup</button>
+                </div>
+            </form>
+            <div id="lookupResult" class="result" hidden></div>
+        </section>
+
+        <section class="card">
+            <h2>Routes</h2>
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <div class="segmented" role="tablist" aria-label="Routes view">
+                        <button id="viewTable" class="segmented-btn" role="tab" aria-selected="true">Table</button>
+                        <button id="viewCards" class="segmented-btn" role="tab" aria-selected="false">Cards</button>
+                    </div>
+                    <input id="routesSearch" class="search" type="search" placeholder="Search routes..." aria-label="Search routes" />
+                </div>
+                <div class="toolbar-right">
+                    <button id="toggleRoutes" class="secondary" aria-expanded="true" aria-controls="routesSectionBody">Hide</button>
+                    <button id="refreshRoutes" class="secondary">Refresh</button>
+                </div>
+            </div>
+            <div id="routesSectionBody" class="collapsible">
+                <div class="collapsible-inner">
+                    <table id="routesTable">
+                        <thead>
+                            <tr>
+                                <th>Prefix</th>
+                                <th>Next Hop</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div id="routesCards" class="cards-grid" hidden></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="flashOverlay" class="flash-overlay" aria-hidden="true"></div>
+
+    <div id="helpModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Help</h3>
+                <button id="closeHelp" class="icon">✕</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Add Route</strong>: Insert or update a route by providing a CIDR prefix (e.g., 10.0.0.0/8) and a next-hop label. The backend validates IPv4 CIDR format.</p>
+                <p><strong>Lookup IP</strong>: Enter an IPv4 address to find the longest prefix match and its next hop. If no match exists, you'll see a not found message.</p>
+                <p><strong>Routes Table</strong>: Displays all stored routes. Use the delete action to remove a route.</p>
+                <p><strong>Notes</strong>:
+                <ul>
+                    <li>Only IPv4 addresses/prefixes are supported.</li>
+                    <li>Prefixes must be in CIDR notation, e.g., 192.168.0.0/16.</li>
+                    <li>All changes are in-memory and reset on server restart.</li>
+                </ul>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="closeHelpFooter">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toasts" aria-live="polite" aria-atomic="true"></div>
+    <script src="/static/app.js"></script>
+    <script>
+        // Basic connectivity check: fetch routes on load
+        document.addEventListener('DOMContentLoaded', () => {
+            window.RoutingUI && window.RoutingUI.refreshRoutes();
+        });
+    </script>
+</body>
+</html>
+
+
