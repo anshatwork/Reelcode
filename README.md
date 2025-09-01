@@ -1,4 +1,4 @@
-# Reelcode 🎥💻  
+# Reelcode  
 
 Welcome to **Reelcode**, a repository where I combine **Data Structures & Algorithms (DSA)** with their **real-world applications**.  
 
